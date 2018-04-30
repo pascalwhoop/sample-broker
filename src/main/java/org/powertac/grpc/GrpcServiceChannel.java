@@ -33,6 +33,11 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class GrpcServiceChannel implements Initializable
+
+@ConfigurableValue(valueType= "String", description="Host DNS/IP to connect to with the GRPC client")
+private String host;
+@ConfigurableValue(valueType= "Integer", description="Port to connect to with the GRPC client")
+private Integer port;
 {
   @Autowired
   public GRPCTypeConverter converter;
@@ -47,7 +52,7 @@ public class GrpcServiceChannel implements Initializable
   @Override
   public void initialize(BrokerContext broker)
   {
-    channel = ManagedChannelBuilder.forAddress("localhost", 1234).usePlaintext(true).build();
+    channel = ManagedChannelBuilder.forAddress(this.host, this.port).usePlaintext(true).build();
     log.info("Channel opening to Python GRPC Server");
     log.info("#####################################");
 
