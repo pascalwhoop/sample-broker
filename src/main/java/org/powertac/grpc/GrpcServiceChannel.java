@@ -25,6 +25,7 @@ import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.powertac.common.config.ConfigurableValue;
 import org.powertac.samplebroker.ContextManagerService;
 import org.powertac.samplebroker.interfaces.BrokerContext;
 import org.powertac.samplebroker.interfaces.Initializable;
@@ -34,14 +35,14 @@ import org.springframework.stereotype.Service;
 @Service
 public class GrpcServiceChannel implements Initializable
 
-@ConfigurableValue(valueType= "String", description="Host DNS/IP to connect to with the GRPC client")
-private String host;
-@ConfigurableValue(valueType= "Integer", description="Port to connect to with the GRPC client")
-private Integer port;
 {
   @Autowired
   public GRPCTypeConverter converter;
   ManagedChannel channel;
+  @ConfigurableValue(valueType= "String", description="Host DNS/IP to connect to with the GRPC client")
+  private String host;
+  @ConfigurableValue(valueType= "Integer", description="Port to connect to with the GRPC client")
+  private Integer port;
 
   public ContextManagerServiceGrpc.ContextManagerServiceBlockingStub     contextStub;
   public MarketManagerServiceGrpc.MarketManagerServiceBlockingStub       marketStub;
