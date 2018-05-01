@@ -40,9 +40,9 @@ public class GrpcServiceChannel implements Initializable
   public GRPCTypeConverter converter;
   ManagedChannel channel;
   @ConfigurableValue(valueType= "String", description="Host DNS/IP to connect to with the GRPC client")
-  private String host;
+  private String host = "localhost";
   @ConfigurableValue(valueType= "Integer", description="Port to connect to with the GRPC client")
-  private Integer port;
+  private Integer port = 50051;
 
   public ContextManagerServiceGrpc.ContextManagerServiceBlockingStub     contextStub;
   public MarketManagerServiceGrpc.MarketManagerServiceBlockingStub       marketStub;
