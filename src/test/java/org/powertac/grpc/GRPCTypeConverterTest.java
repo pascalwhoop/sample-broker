@@ -17,8 +17,6 @@
 package org.powertac.grpc;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ObjectWriter;
 import de.pascalwhoop.powertac.grpc.*;
 import org.joda.time.Instant;
 import org.junit.Test;
