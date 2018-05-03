@@ -74,7 +74,7 @@ public class ContextManagerService
    */
   public void handleMessage(BankTransaction btx)
   {
-    comm.contextStub.handlePBBankTransaction(comm.converter.convert(btx));
+    //comm.contextStub.handlePBBankTransaction(comm.converter.convert(btx));
   }
 
   /**
@@ -82,7 +82,7 @@ public class ContextManagerService
    */
   public void handleMessage(CashPosition cp)
   {
-    comm.contextStub.handlePBCashPosition(comm.converter.convert(cp));
+    //comm.contextStub.handlePBCashPosition(comm.converter.convert(cp));
   }
 
   /**
@@ -91,7 +91,7 @@ public class ContextManagerService
    */
   public void handleMessage(DistributionReport dr)
   {
-    comm.contextStub.handlePBDistributionReport(comm.converter.convert(dr));
+    //comm.contextStub.handlePBDistributionReport(comm.converter.convert(dr));
   }
 
   /**
@@ -101,7 +101,7 @@ public class ContextManagerService
    */
   public void handleMessage(Competition comp)
   {
-    comm.contextStub.handlePBCompetition(comm.converter.convert(comp));
+    //comm.contextStub.handlePBCompetition(comm.converter.convert(comp));
   }
 
   /**

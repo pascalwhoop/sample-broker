@@ -220,7 +220,7 @@ public class PortfolioManagerService
    */
   public synchronized void handleMessage(CustomerBootstrapData cbd)
   {
-    comm.portfolioStub.handlePBCustomerBootstrapData(comm.converter.convert(cbd));
+    //comm.portfolioStub.handlePBCustomerBootstrapData(comm.converter.convert(cbd));
   }
 
   /**
@@ -230,7 +230,7 @@ public class PortfolioManagerService
    */
   public synchronized void handleMessage(TariffSpecification spec)
   {
-    comm.portfolioStub.handlePBTariffSpecification(comm.converter.convert(spec));
+    //comm.portfolioStub.handlePBTariffSpecification(comm.converter.convert(spec));
   }
 
   /**
@@ -239,7 +239,7 @@ public class PortfolioManagerService
    */
   public synchronized void handleMessage(TariffStatus ts)
   {
-    log.info("TariffStatus: " + ts.getStatus());
+    //log.info("TariffStatus: " + ts.getStatus());
   }
 
   /**
@@ -399,7 +399,7 @@ public class PortfolioManagerService
         spec.addRate(rr);
       }
       spec.addRate(rate);
-      customerSubscriptions.put(spec, new LinkedHashMap<>());
+      customerSubscriptions.put(spec, new LinkedHashMap<CustomerInfo, CustomerRecord>());
       tariffRepo.addSpecification(spec);
       brokerContext.sendMessage(spec);
     }

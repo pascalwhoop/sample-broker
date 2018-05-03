@@ -25,6 +25,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <protobuf.version>3.5.1</protobuf.version>
         <grpc.version>1.10.0</grpc.version><!-- CURRENT_GRPC_VERSION -->
+        <org.mapstruct.version>1.2.0.Final</org.mapstruct.version>
         <exec.args></exec.args>
         <syst.args></syst.args>
     </properties>
@@ -91,12 +92,19 @@
           <version>1.10.0</version>
       </dependency>
 
+      <dependency>
+          <groupId>org.mapstruct</groupId>
+          <artifactId>mapstruct</artifactId> <!-- use mapstruct-jdk8 for Java 8 or higher -->
+          <version>${org.mapstruct.version}</version>
+      </dependency>
       <!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-core -->
+<!--
       <dependency>
           <groupId>com.fasterxml.jackson.core</groupId>
           <artifactId>jackson-core</artifactId>
           <version>2.9.5</version>
       </dependency>
+-->
 
 
   </dependencies>
@@ -112,6 +120,23 @@
       </extensions>
 
       <plugins>
+          <!--Generates Converters between Domain Objects and PB objects-->
+          <plugin>
+              <groupId>org.apache.maven.plugins</groupId>
+              <artifactId>maven-compiler-plugin</artifactId>
+              <version>3.5.1</version>
+              <configuration>
+                  <source>1.7</source> <!-- or higher, depending on your project -->
+                  <target>1.7</target> <!-- or higher, depending on your project -->
+                  <annotationProcessorPaths>
+                      <path>
+                          <groupId>org.mapstruct</groupId>
+                          <artifactId>mapstruct-processor</artifactId>
+                          <version>${org.mapstruct.version}</version>
+                      </path>
+                  </annotationProcessorPaths>
+              </configuration>
+          </plugin>
           <!--Generates GRPC Code from .proto files-->
           <plugin>
               <groupId>org.xolstice.maven.plugins</groupId>

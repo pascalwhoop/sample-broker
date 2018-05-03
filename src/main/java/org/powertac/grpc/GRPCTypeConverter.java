@@ -25,13 +25,11 @@ import org.apache.logging.log4j.Logger;
 import org.joda.time.Instant;
 import org.powertac.common.*;
 import org.powertac.common.enumerations.PowerType;
-import org.powertac.common.msg.BalanceReport;
-import org.powertac.common.msg.CustomerBootstrapData;
-import org.powertac.common.msg.DistributionReport;
-import org.powertac.common.msg.MarketBootstrapData;
+import org.powertac.common.msg.*;
 import org.powertac.common.repo.BrokerRepo;
 import org.powertac.common.repo.TimeslotRepo;
 import org.powertac.common.xml.BrokerConverter;
+import org.powertac.grpc.mappers.BalancingTransactionMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -217,13 +215,15 @@ public class GRPCTypeConverter
 
   public PBBalancingTransaction convert(BalancingTransaction tx)
   {
-    return PBBalancingTransaction.newBuilder()
-        .setId(tx.getId())
-        .setKWh(tx.getKWh())
-        .setCharge(tx.getCharge())
-        .setBroker(tx.getBroker().getUsername())
-        .setPostedTimeslot(tx.getPostedTimeslotIndex())
-        .build();
+    return BalancingTransactionMapper.INSTANCE.map(tx).build();
+
+//    return PBBalancingTransaction.newBuilder()
+//        .setId(tx.getId())
+//        .setKWh(tx.getKWh())
+//        .setCharge(tx.getCharge())
+//        .setBroker(tx.getBroker().getUsername())
+//        .setPostedTimeslot(tx.getPostedTimeslotIndex())
+//        .build();
   }
 
   public PBClearedTrade convert(ClearedTrade ct)
@@ -323,6 +323,13 @@ public class GRPCTypeConverter
 
   }
 
+  public PBWeatherForecastPrediction convert(WeatherForecastPrediction in){
+    return basicConversionToPB(in, PBWeatherForecastPrediction.newBuilder())
+        .build();
+
+
+  }
+
  // private Iterable<? extends PBWeatherForecastPrediction> convert(List<WeatherForecastPrediction> predictions)
  // {
  //   LinkedList<PBWeatherForecastPrediction> list = new LinkedList<>();
@@ -337,7 +344,9 @@ public class GRPCTypeConverter
 
   public PBWeatherReport convert(WeatherReport in)
   {
-    return basicConversionToPB(in, PBWeatherReport.newBuilder()).build();
+    return basicConversionToPB(in, PBWeatherReport.newBuilder())
+        .setCurrentTimeslot(convert(in.getCurrentTimeslot()))
+        .build();
   }
 
   public PBBalanceReport convert(BalanceReport in)
@@ -357,12 +366,43 @@ public class GRPCTypeConverter
         .build();
   }
 
+  public PBSimPause convert(SimPause in)
+  {
+    return basicConversionToPB(in, PBSimPause.newBuilder())
+        .build();
+  }
+  public PBSimResume convert(SimResume in)
+  {
+    return basicConversionToPB(in, PBSimResume.newBuilder())
+        .setStart(in.getStart().getMillis())
+        .build();
+  }
+  public PBTimeslotComplete convert(TimeslotComplete in)
+  {
+    return basicConversionToPB(in, PBTimeslotComplete.newBuilder())
+        .build();
+  }
+
+  public PBTimeslotUpdate convert(TimeslotUpdate in)
+  {
+    return basicConversionToPB(in, PBTimeslotUpdate.newBuilder())
+        .setPostedTime(in.getPostedTime().getMillis())
+        .build();
+  }
+
   public PBTariffSpecification convert(TariffSpecification in)
   {
+    long expiration = 0;
+    try{
+      expiration = in.getExpiration().getMillis();
+    }
+    catch (Exception e){
+
+    }
 
     return basicConversionToPB(in, PBTariffSpecification.newBuilder())
         .setBroker(in.getBroker().getUsername())
-        .setExpiration(in.getExpiration().getMillis())
+        .setExpiration(expiration)
         .setPowerType(convert(in.getPowerType()))
         .addAllRates(listConvert(in.getRates(),Rate.class,  PBRate.class))
         .addAllRegulationRates(listConvert(in.getRegulationRates(), RegulationRate.class, PBRegulationRate.class))
@@ -405,6 +445,7 @@ public class GRPCTypeConverter
     }
     return null;
   }
+
 
 
 //    public  PBPowerType convert(PowerType pt){
@@ -470,42 +511,47 @@ public class GRPCTypeConverter
       props = BeanUtils.describe(in);
     }
     catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-      e.printStackTrace();
+      log.error("error with bean util describe");
+      log.error(in.getClass().getName());
     }
 
     for (Map.Entry<String, String> next : props.entrySet()) {
       Descriptors.FieldDescriptor fieldByName = builder.getDescriptorForType().findFieldByName(next.getKey());
       //parsing all different types from string
+      String value = next.getValue();
       if (fieldByName == null) continue;
       try {
+        if(fieldByName.isRepeated()){
+          //skipping repeated fields right away
+          break;
+        }
         switch (fieldByName.getType()) {
-
           case DOUBLE:
-            builder.setField(fieldByName, Double.parseDouble(next.getValue()));
+            builder.setField(fieldByName, Double.parseDouble(value));
             break;
           case FLOAT:
-            builder.setField(fieldByName, Float.parseFloat(next.getValue()));
+            builder.setField(fieldByName, Float.parseFloat(value));
             break;
           case INT64:
-            builder.setField(fieldByName, Long.parseLong(next.getValue()));
+            builder.setField(fieldByName, Long.parseLong(value));
             break;
           case UINT64:
-            builder.setField(fieldByName, Long.parseLong(next.getValue()));
+            builder.setField(fieldByName, Long.parseLong(value));
             break;
           case INT32:
-            builder.setField(fieldByName, Integer.parseInt(next.getValue()));
+            builder.setField(fieldByName, Integer.parseInt(value));
             break;
           case FIXED64:
-            builder.setField(fieldByName, Long.parseLong(next.getValue()));
+            builder.setField(fieldByName, Long.parseLong(value));
             break;
           case FIXED32:
-            builder.setField(fieldByName, Integer.parseInt(next.getValue()));
+            builder.setField(fieldByName, Integer.parseInt(value));
             break;
           case BOOL:
-            builder.setField(fieldByName, Boolean.parseBoolean(next.getValue()));
+            builder.setField(fieldByName, Boolean.parseBoolean(value));
             break;
           case STRING:
-            builder.setField(fieldByName, next.getValue());
+            builder.setField(fieldByName, value);
             break;
           case GROUP:
             //TODO is message
@@ -514,31 +560,32 @@ public class GRPCTypeConverter
             //TODO is message
             break;
           case BYTES:
-            builder.setField(fieldByName, next.getValue().getBytes());
+            builder.setField(fieldByName, value.getBytes());
             break;
           case UINT32:
-            builder.setField(fieldByName, Integer.parseInt(next.getValue()));
+            builder.setField(fieldByName, Integer.parseInt(value));
             break;
           case ENUM:
             //TODO check
-            builder.setField(fieldByName, Integer.parseInt(next.getValue()));
+            builder.setField(fieldByName, Integer.parseInt(value));
             break;
           case SFIXED32:
-            builder.setField(fieldByName, Integer.parseInt(next.getValue()));
+            builder.setField(fieldByName, Integer.parseInt(value));
             break;
           case SFIXED64:
-            builder.setField(fieldByName, Long.parseLong(next.getValue()));
+            builder.setField(fieldByName, Long.parseLong(value));
             break;
           case SINT32:
-            builder.setField(fieldByName, Integer.parseInt(next.getValue()));
+            builder.setField(fieldByName, Integer.parseInt(value));
             break;
           case SINT64:
-            builder.setField(fieldByName, Long.parseLong(next.getValue()));
+            builder.setField(fieldByName, Long.parseLong(value));
             break;
         }
       }
       catch (Exception e) {
-        e.printStackTrace();
+        log.error(String.format("Conversion error for %1$s -- %2$s -- %3$s", value, in.getClass().getName(), fieldByName));
+        log.error(e);
       }
 
     }

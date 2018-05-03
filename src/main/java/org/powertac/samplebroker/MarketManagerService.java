@@ -136,7 +136,7 @@ public class MarketManagerService
   public synchronized void handleMessage(Competition comp)
   {
     minMWh = Math.max(minMWh, comp.getMinimumOrderQuantity());
-    comm.marketStub.handlePBCompetition(comm.converter.convert(comp));
+    //comm.marketStub.handlePBCompetition(comm.converter.convert(comp));
   }
 
   /**
@@ -162,7 +162,7 @@ public class MarketManagerService
    */
   public synchronized void handleMessage(DistributionTransaction dt)
   {
-    comm.marketStub.handlePBDistributionTransaction(comm.converter.convert(dt));
+    //comm.marketStub.handlePBDistributionTransaction(comm.converter.convert(dt));
   }
 
   /**
@@ -171,8 +171,8 @@ public class MarketManagerService
    */
   public synchronized void handleMessage(CapacityTransaction dt)
   {
-    comm.marketStub.handlePBCapacityTransaction(comm.converter.convert(dt));
-    log.info("Capacity tx: " + dt.getCharge());
+    //comm.marketStub.handlePBCapacityTransaction(comm.converter.convert(dt));
+    //log.info("Capacity tx: " + dt.getCharge());
   }
 
   /**
@@ -182,7 +182,7 @@ public class MarketManagerService
    */
   public synchronized void handleMessage(MarketBootstrapData data)
   {
-    comm.marketStub.handlePBMarketBootstrapData(comm.converter.convert(data));
+    //comm.marketStub.handlePBMarketBootstrapData(comm.converter.convert(data));
   }
 
   /**
@@ -221,7 +221,7 @@ public class MarketManagerService
    */
   public synchronized void handleMessage(WeatherForecast forecast)
   {
-    comm.marketStub.handlePBWeatherForecast(comm.converter.convert(forecast));
+    //comm.marketStub.handlePBWeatherForecast(comm.converter.convert(forecast));
   }
 
   /**
@@ -230,7 +230,7 @@ public class MarketManagerService
   public synchronized void handleMessage(WeatherReport report)
   {
 
-    comm.marketStub.handlePBWeatherReport(comm.converter.convert(report));
+    //comm.marketStub.handlePBWeatherReport(comm.converter.convert(report));
   }
 
   /**

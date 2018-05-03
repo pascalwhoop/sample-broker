@@ -17,11 +17,7 @@
 package org.powertac.grpc;
 
 import com.sun.org.apache.xpath.internal.SourceTree;
-import de.pascalwhoop.powertac.grpc.ContextManagerServiceGrpc;
-import de.pascalwhoop.powertac.grpc.MarketManagerServiceGrpc;
-import de.pascalwhoop.powertac.grpc.PortfolioManagerServiceGrpc;
-import de.pascalwhoop.powertac.grpc.ConnectionServiceGrpc;
-import de.pascalwhoop.powertac.grpc.Empty;
+import de.pascalwhoop.powertac.grpc.*;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 import org.apache.logging.log4j.LogManager;
@@ -52,6 +48,7 @@ public class GrpcServiceChannel implements Initializable
   public ContextManagerServiceGrpc.ContextManagerServiceBlockingStub     contextStub;
   public MarketManagerServiceGrpc.MarketManagerServiceBlockingStub       marketStub;
   public PortfolioManagerServiceGrpc.PortfolioManagerServiceBlockingStub portfolioStub;
+  public  GameServiceGrpc.GameServiceBlockingStub                        gameStub;
   private ConnectionServiceGrpc.ConnectionServiceBlockingStub            connStub;
   static private                                                         Logger log = LogManager.getLogger(ContextManagerService.class);
 
@@ -70,6 +67,7 @@ public class GrpcServiceChannel implements Initializable
         marketStub = MarketManagerServiceGrpc.newBlockingStub(channel);
         portfolioStub = PortfolioManagerServiceGrpc.newBlockingStub(channel);
         connStub = ConnectionServiceGrpc.newBlockingStub(channel);
+        gameStub = GameServiceGrpc.newBlockingStub(channel);
 
         connStub.pingpong(Empty.newBuilder().build());
         isEnabled = true;

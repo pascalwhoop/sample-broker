@@ -16,13 +16,13 @@
 
 package org.powertac.grpc;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import de.pascalwhoop.powertac.grpc.*;
 import org.joda.time.Instant;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.powertac.common.*;
 import org.powertac.common.msg.MarketBootstrapData;
+import org.powertac.common.repo.TimeslotRepo;
 import org.springframework.test.util.ReflectionTestUtils;
 import sun.awt.image.ImageWatched;
 
@@ -30,12 +30,14 @@ import java.util.LinkedList;
 
 import static org.junit.Assert.assertEquals;
 
-public class GRPCTypeConverterTest {
+public class GRPCTypeConverterTest
+{
 
     GRPCTypeConverter conv = new GRPCTypeConverter();
 
     @Test
-    public void testSimpleConversions() {
+    public void testSimpleConversions()
+    {
         //BeanUtils.copyProperties(null, null);
         MarketBootstrapData in = ValueGenerator.marketBootstrapData;
         PBMarketBootstrapData out = conv.convert(in);
@@ -48,7 +50,8 @@ public class GRPCTypeConverterTest {
     Competition competition = Competition.newInstance("TestCompetition");
 
     @Test
-    public void timeslotC() {
+    public void timeslotC()
+    {
         Timeslot timeslot = ValueGenerator.timeslot;
         PBTimeslot pbTimeslot = conv.convert(timeslot);
         assertEquals(pbTimeslot.getSerialNumber(), timeslot.getSerialNumber());
@@ -57,7 +60,8 @@ public class GRPCTypeConverterTest {
 
 
     @Test
-    public void bankTransactionC() {
+    public void bankTransactionC()
+    {
         BankTransaction spy = Mockito.spy(ValueGenerator.bankTransaction);
         Mockito.doReturn(new Timeslot(ValueGenerator.INT, new Instant(8))).when(spy).getPostedTimeslot();
         PBBankTransaction out = conv.convert(spy);
@@ -65,11 +69,13 @@ public class GRPCTypeConverterTest {
     }
 
     @Test
-    public void bankTransactionC1() {
+    public void bankTransactionC1()
+    {
     }
 
     @Test
-    public void brokerC() {
+    public void brokerC()
+    {
         Broker in = ValueGenerator.broker;
         in.setKey(ValueGenerator.STRING);
         in.setPassword(ValueGenerator.STRING);
@@ -78,26 +84,26 @@ public class GRPCTypeConverterTest {
     }
 
 
-
     @Test
-    public void basicConversionToPB() throws JsonProcessingException
+    public void basicConversionToPB()
     {
         TariffSpecification in = ValueGenerator.tariffSpecification;
         in.withExpiration(Instant.now())
             .addSupersedes(1234);
         PBTariffSpecification out = conv.convert(in);
         assertEquals(in.getSupersedes(), out.getSupersedesList());
+
     }
 
 
     @Test
-    public void listConvert() throws JsonProcessingException
+    public void listConvert()
     {
         LinkedList<Rate> rates = new LinkedList<>();
         Rate r = new Rate().withDailyBegin(1).withDailyEnd(2);
         ReflectionTestUtils.setField(r, "timeService", new TimeService());
         rates.add(r);
-        
+
         Iterable<PBRate> out = conv.listConvert(rates, Rate.class, PBRate.class);
         for (PBRate pbRate :
             out) {
@@ -106,4 +112,24 @@ public class GRPCTypeConverterTest {
 
     }
 
+    @Test
+    public void convertBalancingTransaction()
+    {
+        BalancingTransaction in = ValueGenerator.balancingTransaction;
+        PBBalancingTransaction out = conv.convert(in);
+        assertEquals(in.getCharge(), out.getCharge());
+        assertEquals(in.getKWh(), out.getKWh());
+        assertEquals(in.getPostedTimeslotIndex(), out.getPostedTimeslot());
+    }
+
+    @Test
+    public void convert1()
+    {
+    }
+
+    @Test
+    public void reflectionConvertCall()
+    {
+    }
 }
+

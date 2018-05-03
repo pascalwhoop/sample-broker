@@ -42,6 +42,14 @@ service PortfolioManagerService                                                 
 
 }
 
+service GameService {
+    rpc handlePBTimeslotComplete        (PBTimeslotComplete      ) returns (Empty) {}
+    rpc handlePBTimeslotUpdate          (PBTimeslotUpdate        ) returns (Empty) {}
+    rpc handlePBSimPause                (PBSimPause              ) returns (Empty) {}
+    rpc handlePBSimResume               (PBSimResume             ) returns (Empty) {}
+
+}
+
 service ConnectionService
        {
     rpc pingpong (Empty) returns (Empty) {}
@@ -333,7 +341,7 @@ message PBWeatherForecastPrediction {
 }                                                              
 message PBWeatherReport {                                        
    int64 id                                         = 1 ;
-   int32 currentTimeslot                            = 2 ;
+   PBTimeslot currentTimeslot                       = 2 ;
    double temperature                               = 3 ;
    double windSpeed                                 = 4 ;
    double windDirection                             = 5 ;
@@ -431,3 +439,19 @@ message PBProperties {
     map<string,string> values                       = 1 ;
 }
 message Empty{}
+
+message PBTimeslotUpdate {
+    int64 id                                         = 1 ;
+    int32 firstEnabled                               = 2 ;
+    int32 lastEnabled                                = 3 ;
+    int64 postedTime                                 = 4 ;
+}
+message PBTimeslotComplete {
+    int32 timeslotIndex                             = 1 ;
+}
+message PBSimPause{
+
+}
+message PBSimResume{
+    int64 start                                     = 1 ;
+}

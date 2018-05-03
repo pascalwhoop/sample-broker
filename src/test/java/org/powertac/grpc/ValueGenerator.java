@@ -42,7 +42,7 @@ public class ValueGenerator {
 
     // a bunch of sample objects to use to test the Java <-> PB <-> serialize <-> PB <-> Java loop
     public static BalanceReport              balanceReport                 = new BalanceReport            ( INT, DOUBLE);
-    public static Broker                     broker                        = new Broker                   ( STRING, BOOLEAN, BOOLEAN);
+    public static Broker                     broker                        = new Broker                   ( "broker username", BOOLEAN, BOOLEAN);
     public static TariffSpecification        tariffSpecification           = new TariffSpecification      ( broker, PowerType.CONSUMPTION);
     public static BalancingControlEvent      balancingControlEvent         = new BalancingControlEvent    ( tariffSpecification, DOUBLE, DOUBLE, INT );
     public static BalancingTransaction       balancingTransaction          = new BalancingTransaction     ( broker, INT, DOUBLE, DOUBLE);
